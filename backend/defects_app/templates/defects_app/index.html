@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Проекты</title>
+</head>
+<body>
+    <h1>Проекты</h1>
+    <ul>
+    {% for project in projects %}
+        <li>{{ project.name }}</li>
+    {% empty %}
+        <li>Нет проектов</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

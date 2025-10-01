@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import api from "./api";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface Project {
+  id: number;
+  name: string;
+  description: string;
 }
 
-export default App
+interface Defect {
+  id: number;
+  title: string;
+  status: string;
+  priority: string;
+}
+
+export default function App() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [defects, setDefects] = useState<Defect[]>([]);
+
+  useEffect(() => {
+    api.get<Project[]>("projects/")
+      .then((r) => setProjects(r.data))
+      .catch((e) => console.error(e));
+
+    api.get<Defect[]>("defects/")
+      .then((r) => setDefects(r.data))
+      .catch((e) => console.error(e));
+  }, []);
+
+  return (
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
+      <h1>Проекты</h1>
+      {projects.length === 0 ? (
+        <p>Нет проектов</p>
+      ) : (
+        <ul>
+          {projects.map((p) => (
+            <li key={p.id}>
+              {p.name} — {p.description}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2>Дефекты</h2>
+      {defects.length === 0 ? (
+        <p>Нет дефектов</p>
+      ) : (
+        <ul>
+          {defects.map((d) => (
+            <li key={d.id}>
+              {d.title} | {d.status} | {d.priority}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
